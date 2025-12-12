@@ -1,0 +1,39 @@
+// Example firebase config file with comments. Copy this file into `src/firebase.config.js` and replace with your own project values.
+
+// Keep this file committed (safe to share) because it doesn't contain secrets.
+
+export default {
+  // Optional version number for your config format
+  version: "2",
+
+  // Firebase project number (not secret)
+  projectNumber: "562629216866",
+
+  // Your Firebase project id
+  projectId: "adminfee",
+
+  // App ID from Firebase console (analytics/measurement)
+  appId: "1:562629216866:web:0b5b622d0e7d2d809fdf3b",
+
+  // Real-time DB settings - optional if not using Realtime Database
+  realtimeDatabaseInstanceUri: "",
+  realtimeDatabaseUrl: "",
+
+  // Storage bucket for user files (optional)
+  storageBucket: "adminfee.firebasestorage.app",
+
+  // Location if required - optional
+  locationId: "",
+
+  // API key used by your web app (not secret for front-end use)
+  apiKey: "AIzaSyA6zF0-QQ3YbYxksikOr46S_n2XRQPWTI8",
+
+  // Authentication domain for the project
+  authDomain: "adminfee.firebaseapp.com",
+
+  // Messaging sender ID (optional)
+  messagingSenderId: "562629216866",
+
+  // Measurement ID for analytics
+  measurementId: "G-C5TTTSPBCE"
+};

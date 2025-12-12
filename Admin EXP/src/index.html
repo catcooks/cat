@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Fee Calculator</title>
+  <link rel="stylesheet" href="main.css" />
+  <meta name="description" content="Admin Fee Calculator single-page app with Firebase auth and storage" />
+</head>
+<body>
+  <nav class="navbar" role="navigation" aria-label="Top Navigation">
+    <div class="nav-brand">Admin Fee</div>
+    <ul class="nav-links">
+      <li><button id="aboutBtn" class="nav-button">About</button></li>
+      <li><button id="loginBtn" class="nav-button">Log In</button></li>
+      <li><button id="logoutBtn" class="nav-button hidden">Log Out</button></li>
+      <li><button id="registerBtn" class="nav-button">Register</button></li>
+      <li>
+        <button id="heartBtn" class="heart-button" aria-label="Change heart status"><span id="heartIcon">❤️</span> <span id="heartUser">Guest</span></button>
+      </li>
+      <li>
+        <button id="darkToggle" class="nav-button" aria-pressed="false" aria-label="Toggle dark mode">🌙</button>
+      </li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <section class="panel input-panel" aria-labelledby="inputTitle">
+      <h2 id="inputTitle">Input</h2>
+      <div class="input-row">
+        <label for="amountInput" class="sr-only">Transaction amount</label>
+        <input id="amountInput" type="number" min="0" inputmode="numeric" placeholder="Enter amount" aria-describedby="amountHelp" />
+        <button id="enterBtn" class="primary">Enter</button>
+      </div>
+      <div id="amountHelp" class="sr-only">Type amount and press Enter button or press Enter key</div>
+    </section>
+
+    <section class="panel results-panel" aria-labelledby="resultsTitle">
+      <div class="panel-header">
+        <h2 id="resultsTitle">Results</h2>
+        <div class="panel-actions">
+          <button id="copyAllResults" class="small-button">Copy All Results</button>
+        </div>
+      </div>
+      <div id="results" tabindex="0" class="results" aria-live="polite"></div>
+    </section>
+
+    <section class="panel history-panel" aria-labelledby="historyTitle">
+      <div class="panel-header">
+        <h2 id="historyTitle">History</h2>
+        <div class="panel-actions">
+          <button id="copyAllHistory" class="small-button">Copy All History</button>
+          <button id="clearHistoryBtn" class="danger small-button">Delete All History</button>
+        </div>
+      </div>
+      <ul id="historyList" class="history" aria-live="polite"></ul>
+    </section>
+  </main>
+
+  <!-- Heart picker panel -->
+  <aside id="heartPanel" class="heart-panel" aria-hidden="true">
+    <h3>Choose a heart</h3>
+    <div class="hearts">
+      <button class="heart-option" data-type="single" data-color="#e11d48">❤️</button>
+      <button class="heart-option" data-type="double" data-color="#f97316">❤️❤️</button>
+      <button class="heart-option" data-type="single" data-color="#06b6d4">💙</button>
+      <button class="heart-option" data-type="double" data-color="#7c3aed">💜💜</button>
+    </div>
+    <div class="heart-name">
+      <label for="heartName">Name</label>
+      <input id="heartName" type="text" placeholder="Display Name" />
+      <button id="saveHeartProfile" class="primary">Save</button>
+    </div>
+  </aside>
+
+  <!-- Modals -->
+  <div id="modalOverlay" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header>
+        <h3 id="modalTitle">Modal</h3>
+        <button id="closeModal" class="close" aria-label="Close modal">✕</button>
+      </header>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- Confirm delete all modal -->
+  <div id="confirmOverlay" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal confirm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <h3 id="confirmTitle">Confirm Action</h3>
+      <p>Are you sure you want to delete all history?</p>
+      <div class="modal-actions">
+        <button id="confirmDelete" class="danger">Delete</button>
+        <button id="cancelDelete">Cancel</button>
+        <button id="closeConfirm" class="close" aria-label="Close confirm modal">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About, Login, Register modal content templates -->
+  <template id="aboutTemplate">
+    <p>This Admin Fee Calculator computes fees based on transaction amount using pre-defined rules. It supports user authentication, storage, and responsive UI.</p>
+  </template>
+
+  <template id="loginTemplate">
+    <form id="loginForm" role="form" aria-label="Log in form">
+      <label for="loginEmail">Email</label>
+      <input id="loginEmail" type="email" required aria-required="true" />
+      <label for="loginPassword">Password</label>
+      <input id="loginPassword" type="password" required aria-required="true" />
+      <div class="form-actions">
+        <button type="submit" class="primary">Sign In</button>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="google-signin small-button" aria-label="Sign in with Google">Sign In with Google</button>
+      </div>
+      <div class="form-actions small muted">
+        <a href="#" class="switch-to-register">New user? Register</a>
+      </div>
+    </form>
+  </template>
+
+  <template id="registerTemplate">
+    <form id="registerForm" role="form" aria-label="Register form">
+      <label for="registerEmail">Email</label>
+      <input id="registerEmail" type="email" required aria-required="true" />
+      <label for="registerPassword">Password</label>
+      <input id="registerPassword" type="password" required aria-required="true" />
+      <label for="registerConfirmPassword">Confirm Password</label>
+      <input id="registerConfirmPassword" type="password" required aria-required="true" />
+      <div class="form-actions">
+        <button type="submit" class="primary">Register</button>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="google-signin small-button" aria-label="Register with Google">Sign In with Google</button>
+      </div>
+      <div class="form-actions small muted">
+        <a href="#" class="switch-to-login">Already have an account? Log In</a>
+      </div>
+    </form>
+  </template>
+
+  <!-- Firebase SDKs (modular via ESM) - app.js imports them as modules -->
+  <script type="module" src="app.js"></script>
+  <!-- Toast notification container (ARIA live region) -->
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
